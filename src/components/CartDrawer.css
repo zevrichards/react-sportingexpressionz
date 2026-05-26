@@ -1,0 +1,176 @@
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 200;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.cart-drawer {
+  position: fixed;
+  top: 0; right: 0;
+  width: 380px;
+  max-width: 100vw;
+  height: 100vh;
+  background: var(--clr-bg);
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 20px rgba(0,0,0,.15);
+  transform: translateX(100%);
+  transition: transform .3s ease;
+}
+.cart-drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--clr-border);
+}
+.drawer-header h2 { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.drawer-count {
+  background: var(--clr-green);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 20px;
+}
+.drawer-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.drawer-clear {
+  font-size: .76rem;
+  color: var(--clr-red);
+  text-decoration: underline;
+  padding: 3px 6px;
+  border-radius: var(--radius);
+  transition: opacity var(--transition);
+}
+.drawer-clear:hover { opacity: .7; }
+.drawer-close {
+  font-size: 1rem;
+  color: var(--clr-text-muted);
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  transition: background var(--transition);
+}
+.drawer-close:hover { background: var(--clr-surface); }
+
+.drawer-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.drawer-empty { color: var(--clr-text-muted); text-align: center; margin-top: 40px; }
+
+.drawer-item {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--clr-border);
+}
+.drawer-item:last-child { border-bottom: none; }
+
+.drawer-thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--clr-border);
+  flex-shrink: 0;
+}
+.drawer-item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.drawer-item-name { font-weight: 600; font-size: .9rem; }
+.drawer-item-details { font-size: .78rem; color: var(--clr-text-muted); }
+.drawer-item-print { font-size: .78rem; color: var(--clr-accent); font-weight: 500; }
+.print-fee-note    { color: var(--clr-green); font-weight: 600; }
+
+.drawer-item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.qty-ctrl {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.qty-ctrl button {
+  width: 28px; height: 28px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+}
+.qty-ctrl button:hover { background: var(--clr-surface); }
+.qty-ctrl span { width: 28px; text-align: center; font-size: .85rem; font-weight: 600; }
+
+.drawer-item-price { font-weight: 700; font-size: .9rem; margin-left: auto; }
+.drawer-remove { color: var(--clr-text-muted); font-size: .8rem; padding: 4px; transition: color var(--transition); }
+.drawer-remove:hover { color: var(--clr-red); }
+
+.drawer-pending {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  padding: 12px 20px;
+  background: color-mix(in srgb, #f9a825 15%, var(--clr-surface));
+  border-top: 1px solid #f9a825;
+  border-bottom: 1px solid #f9a825;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.drawer-pending:hover { background: color-mix(in srgb, #f9a825 22%, var(--clr-surface)); }
+.drawer-pending__label {
+  font-size: .75rem;
+  font-weight: 700;
+  color: #7c4a00;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.drawer-pending__cta {
+  font-size: .88rem;
+  font-weight: 600;
+  color: #5a3000;
+}
+
+.drawer-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--clr-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.drawer-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: .9rem;
+}
+.drawer-total--bold {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.drawer-subtotal {
+  color: var(--clr-text-muted);
+  font-weight: 400;
+}
+.drawer-discount {
+  color: var(--clr-green);
+  font-weight: 600;
+}

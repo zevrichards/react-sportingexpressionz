@@ -1,0 +1,85 @@
+.confirmation-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 48px;
+}
+
+.confirmation-card {
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 48px 40px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.confirmation-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--clr-green);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.confirmation-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.confirmation-subtitle {
+  color: var(--clr-text-muted);
+  font-size: .95rem;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.confirmation-order {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--clr-surface);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.confirmation-order__label  { font-size: .78rem; color: var(--clr-text-muted); text-transform: uppercase; letter-spacing: .06em; }
+.confirmation-order__number { font-size: 1.1rem; font-weight: 700; font-family: monospace; }
+
+.confirmation-notice {
+  background: color-mix(in srgb, #f9a825 15%, var(--clr-surface));
+  border: 1px solid #f9a825;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: .85rem;
+  line-height: 1.5;
+  color: #5a3e00;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.confirmation-notice--account {
+  background: #e8f4fd;
+  border-color: #90caf9;
+  color: #0d3c61;
+}
+.confirmation-notice--account a {
+  color: #1565c0;
+  font-weight: 600;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}

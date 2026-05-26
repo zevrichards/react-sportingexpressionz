@@ -1,0 +1,214 @@
+/* ─── Fonts ─────────────────────────────────────────────────────────────── */
+@font-face { font-family: 'BasicFont';         src: url('./fonts/FontsFree-Net-Barclays-Premier-League.ttf') format('truetype'); }
+@font-face { font-family: 'EPLFont';           src: url('./fonts/EPLFont.otf') format('opentype'); }
+@font-face { font-family: 'SerieAFont';        src: url('./fonts/Serie A Font 2020-2021.otf') format('opentype'); }
+@font-face { font-family: 'Ligue1Font';        src: url('./fonts/Ligue 1 Font 2021-2022.otf') format('opentype'); }
+@font-face { font-family: 'RealMadridCupFont'; src: url('./fonts/Real Madrid 2021-2022 Font.otf') format('opentype'); }
+/* @font-face { font-family: 'RealMadridCupFont'; src: url('./fonts/RealMadrid2023-2024Font.otf') format('opentype'); } */
+/* @font-face { font-family: 'RealMadridCupFont'; src: url('./fonts/RealMadrid2023-2024Font.ttf') format('truetype'); } */
+@font-face { font-family: 'LaLigaFont';        src: url('./fonts/La Liga Font 2017 2018.ttf') format('truetype'); }
+@font-face { font-family: 'ArsenalFont';       src: url('./fonts/Arsenal Font 2022.ttf') format('truetype'); }
+@font-face { font-family: 'ManCityFont';       src: url('./fonts/Manchester City Font 2020.otf') format('opentype'); }
+@font-face { font-family: 'ManUtdFont';        src: url('./fonts/Manchester United Font 2020-2021.otf') format('opentype'); }
+@font-face { font-family: 'ChelseaCupFont';    src: url('./fonts/Chelsea 2019-2020 Font.otf') format('opentype'); }
+@font-face { font-family: 'LiverpoolCupFont';  src: url('./fonts/Liverpool FC Font 2019-2020.otf') format('opentype'); }
+@font-face { font-family: 'BundesligaFont';    src: url('./fonts/Bayern Munchen 2021-2022 Font.otf') format('opentype'); }
+@font-face { font-family: 'LiverpoolUCLFont';  src: url('./fonts/Liverpool UCL Font 2022 2023.otf') format('opentype'); }
+@font-face { font-family: 'RealMadridUEFAFont';src: url('./fonts/Real Madrid UEFA 2023.otf') format('opentype'); }
+@font-face { font-family: 'AdidasWCFont';      src: url('./fonts/Adidas WC 2022 by Caveras_NeroDesign.otf') format('opentype'); }
+@font-face { font-family: 'NikeWCFont';        src: url('./fonts/Nike World Cup Font 2022.otf') format('opentype'); }
+@font-face { font-family: 'PSGFont';           src: url('./fonts/PSG Font 2021-2022.otf') format('opentype'); }
+
+/* ─── Reset / Base ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --clr-bg:           #ffffff;
+  --clr-surface:      #f5f5f5;
+  --clr-border:       #e0e0e0;
+  --clr-text:         #1a1a1a;
+  --clr-text-muted:   #666666;
+  --clr-accent:       #003087;
+  --clr-accent-hover: #00215e;
+  --clr-green:        #1a7c2f;
+  --clr-green-hover:  #155f24;
+  --clr-red:          #c0392b;
+  --header-height:    56px;
+  --sidebar-width:    240px;
+  --radius:           6px;
+  --shadow-sm:        0 1px 3px rgba(0,0,0,.12);
+  --shadow-md:        0 4px 12px rgba(0,0,0,.15);
+  --transition:       .2s ease;
+}
+
+/* ─── Dark theme ────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --clr-bg:           #121212;
+  --clr-surface:      #1e1e1e;
+  --clr-border:       #2e2e2e;
+  --clr-text:         #efefef;
+  --clr-text-muted:   #999999;
+  --clr-accent:       #5b8dee;
+  --clr-accent-hover: #3b6fe0;
+  --clr-green:        #2ea84a;
+  --clr-green-hover:  #26913e;
+  --clr-red:          #e05c4e;
+  --shadow-sm:        0 1px 3px rgba(0,0,0,.4);
+  --shadow-md:        0 4px 12px rgba(0,0,0,.5);
+}
+
+/* ─── Dark theme component overrides ───────────────────────────────────── */
+[data-theme="dark"] .notice-warning            { color: #f5c842; }
+[data-theme="dark"] .drawer-pending__label,
+[data-theme="dark"] .drawer-pending__cta       { color: #f5c842; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font: inherit; }
+img { display: block; max-width: 100%; }
+ul { list-style: none; }
+
+/* ─── Layout helpers ────────────────────────────────────────────────────── */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.page-content {
+  min-height: calc(100vh - var(--header-height) - 48px);
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+/* ─── Jersey preview overlay ────────────────────────────────────────────── */
+.jersey-preview-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  user-select: none;
+}
+.jersey-preview-wrapper .preview-img {
+  width: 100%;
+  display: block;
+  border-radius: var(--radius);
+}
+.jersey-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.number--basic {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  line-height: 1;
+}
+.number--cup {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  line-height: 1;
+}
+
+/* ─── Buttons ───────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: .9rem;
+  font-weight: 600;
+  transition: background var(--transition), color var(--transition), opacity var(--transition);
+}
+.btn-primary { background: var(--clr-accent); color: #fff; }
+.btn-primary:hover { background: var(--clr-accent-hover); }
+.btn-green { background: var(--clr-green); color: #fff; }
+.btn-green:hover { background: var(--clr-green-hover); }
+.btn-outline { background: transparent; color: var(--clr-accent); border: 2px solid var(--clr-accent); }
+.btn-outline:hover { background: var(--clr-accent); color: #fff; }
+.btn:disabled { opacity: .5; pointer-events: none; }
+.btn-full { width: 100%; justify-content: center; }
+
+/* ─── Form controls ─────────────────────────────────────────────────────── */
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-label {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.form-select, .form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-size: .95rem;
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  transition: border-color var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-select:focus, .form-input:focus {
+  outline: none;
+  border-color: var(--clr-accent);
+}
+.select-wrapper { position: relative; }
+.select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--clr-text-muted);
+  font-size: .8rem;
+}
+
+/* ─── Badges ────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.badge-sale  { background: var(--clr-red);   color: #fff; }
+.badge-new   { background: var(--clr-green); color: #fff; }
+.badge-stock { background: #f0ad00;          color: #fff; }
+
+/* ─── Divider ───────────────────────────────────────────────────────────── */
+.divider { border: none; border-top: 1px solid var(--clr-border); margin: 16px 0; }
+
+/* ─── Spinner ───────────────────────────────────────────────────────────── */
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--clr-border);
+  border-top-color: var(--clr-accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 40px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--clr-surface); }
+::-webkit-scrollbar-thumb { background: var(--clr-border); border-radius: 3px; }

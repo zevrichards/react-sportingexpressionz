@@ -1,0 +1,106 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Admin helper ──────────────────────────────────────────────────────────
+    // Only the store owner can perform privileged writes.
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email == 'sportingexpressionztt@gmail.com';
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ── Leagues (jersey catalogue) ────────────────────────────────────────────
+    // Anyone can browse; only admin can modify.
+    match /Leagues/{document=**} {
+      allow read;
+      allow write, delete: if isAdmin();
+    }
+
+    // ── Pending orders ────────────────────────────────────────────────────────
+    // Only the owning user can read their pending order.
+    // Write is allowed for authenticated users (createPendingOrder on checkout).
+    // Delete is admin-only (fulfilled by Cloud Function via Admin SDK, which
+    // bypasses rules, but we lock it down here for direct SDK calls).
+    match /PendingOrders/{orderNumber} {
+      allow read:         if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create:       if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+    // Each user can only read and write their own document and sub-collections.
+    match /Users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+
+      match /{subcollection=**} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
+      }
+    }
+
+    // ── Mail (receipt queue) ──────────────────────────────────────────────────
+    // Cloud Functions write here via Admin SDK (bypasses rules).
+    // Direct client writes are blocked — receipts are only created server-side.
+    match /mail/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ── Email templates ───────────────────────────────────────────────────────
+    match /email_templates/{document=**} {
+      allow read;
+      allow write: if isAdmin();
+    }
+
+    // ── Promo codes ───────────────────────────────────────────────────────────
+    // Anyone authenticated can read (for validation at checkout).
+    // Only admin can create, modify, or delete codes.
+    match /PromoCodes/{document=**} {
+      allow read:          if isSignedIn();
+      allow write, delete: if isAdmin();
+    }
+
+    // ── Reviews ───────────────────────────────────────────────────────────────
+    // Anyone can read. Only authenticated users can create.
+    // Only the author or admin can update/delete.
+    match /Reviews/{reviewId} {
+      allow read;
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin()
+          || (isSignedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    // ── Tracking ─────────────────────────────────────────────────────────────
+    match /tracking/{document=**} {
+      allow read;
+      allow write: if isAdmin();
+    }
+
+    // ── Site config (sale notice, BOGOF/BOGOHO toggle) ────────────────────────
+    // Must be publicly readable — anonymous visitors need the discount/notice too.
+    match /SiteConfig/{document=**} {
+      allow read;
+      allow write: if isAdmin();
+    }
+
+    // ── Players (global player list, shared across sports) ───────────────────────
+    match /Players/{document=**} {
+      allow read;
+      allow write: if isAdmin();
+    }
+
+    // ── F1 catalogue ─────────────────────────────────────────────────────────────
+    match /F1/{document=**} {
+      allow read;
+      allow write: if isAdmin();
+    }
+
+    // ── Basketball catalogue ──────────────────────────────────────────────────────
+    match /Basketball/{document=**} {
+      allow read;
+      allow write: if isAdmin();
+    }
+  }
+}

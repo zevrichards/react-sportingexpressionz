@@ -1,0 +1,74 @@
+.orders-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 24px; }
+.orders-signin, .orders-empty { text-align: center; padding: 60px 0; color: var(--clr-text-muted); }
+.orders-signin a, .orders-empty a:not(.btn) { color: var(--clr-accent); font-weight: 600; }
+
+.orders-list { display: flex; flex-direction: column; gap: 20px; }
+
+.order-card {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 20px;
+  background: var(--clr-surface);
+  border-bottom: 1px solid var(--clr-border);
+}
+.order-id { font-weight: 700; font-size: .9rem; }
+.order-date { font-size: .78rem; color: var(--clr-text-muted); margin-top: 2px; }
+.order-meta { display: flex; align-items: center; gap: 12px; }
+.order-total { font-weight: 700; }
+
+.order-delivery {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--clr-border);
+  background: var(--clr-surface);
+  font-size: .82rem;
+  color: var(--clr-text-muted);
+  line-height: 1.6;
+}
+.order-delivery-name { font-weight: 600; color: var(--clr-text); }
+.order-delivery-addr, .order-delivery-tel { margin: 0; }
+
+.order-items { padding: 12px 20px; display: flex; flex-direction: column; gap: 12px; }
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.order-thumb {
+  width: 56px; height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--clr-border);
+  flex-shrink: 0;
+}
+.order-item-name { font-weight: 600; font-size: .88rem; }
+.order-item-details { font-size: .78rem; color: var(--clr-text-muted); }
+.order-item-print { font-size: .78rem; color: var(--clr-accent); font-weight: 500; }
+.order-item-price { margin-left: auto; font-weight: 700; font-size: .9rem; white-space: nowrap; }
+
+/* Pending order highlight */
+.order-card--pending { border-color: #f59e0b; }
+.order-card--pending .order-header { background: color-mix(in srgb, #f59e0b 12%, var(--clr-surface)); }
+
+.badge-pending   { background: #f59e0b22; color: #b45309; border: 1px solid #f59e0b; border-radius: 4px; padding: 2px 8px; font-size: .75rem; font-weight: 700; }
+.badge-cancelled { background: #ef444422; color: #b91c1c; border: 1px solid #ef4444; border-radius: 4px; padding: 2px 8px; font-size: .75rem; font-weight: 700; }
+
+/* Payment action area */
+.order-pay-section {
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--clr-border);
+  background: var(--clr-surface);
+}
+.order-pay-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-sm { padding: 6px 14px; font-size: .82rem; }
+.btn-ghost { background: transparent; border: 1px solid var(--clr-border); color: var(--clr-text-muted); }
+.btn-ghost:hover { background: var(--clr-border); }
+
+.paypal-wrap { display: flex; flex-direction: column; gap: 8px; }
+.paypal-note { font-size: .8rem; color: var(--clr-text-muted); margin: 0; }

@@ -1,0 +1,320 @@
+.checkout-title  { font-size: 1.6rem; font-weight: 800; margin-bottom: 24px; }
+.checkout-empty  { text-align: center; padding: 60px 0; color: var(--clr-text-muted); }
+
+/* ─── Resume unpaid order ────────────────────────────────────────────────── */
+.resume-card {
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  max-width: 480px;
+  box-shadow: var(--shadow-md);
+}
+.resume-heading {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--clr-text-muted);
+  margin-bottom: 6px;
+}
+.resume-order-no {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-family: monospace;
+  margin-bottom: 4px;
+}
+.resume-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--clr-accent);
+  margin-bottom: 28px;
+}
+.resume-discard-btn {
+  display: block;
+  background: none;
+  border: none;
+  padding: 12px 0 0;
+  color: var(--clr-text-muted);
+  font-size: .85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.resume-discard-btn:hover { color: var(--clr-text); }
+
+/* ─── Layout ─────────────────────────────────────────────────────────────── */
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Summary sits on the left, right column stacks contact + payment */
+.checkout-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.checkout-summary,
+.checkout-contact,
+.checkout-payment {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.checkout-summary h2,
+.checkout-contact h2,
+.checkout-payment h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+/* Summary header row — title + clear cart */
+.summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.clear-cart-btn {
+  font-size: .78rem;
+  color: var(--clr-red);
+  text-decoration: underline;
+  padding: 2px 4px;
+  border-radius: var(--radius);
+  transition: opacity var(--transition);
+}
+.clear-cart-btn:hover { opacity: .75; }
+
+/* ─── Order summary ──────────────────────────────────────────────────────── */
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--clr-border);
+}
+.summary-item:last-of-type { border-bottom: none; }
+
+.summary-thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  border: 1px solid var(--clr-border);
+  background: var(--clr-surface);
+  flex-shrink: 0;
+}
+
+.summary-info     { flex: 1; }
+.summary-name     { font-weight: 600; font-size: .9rem; }
+.summary-details  { font-size: .78rem; color: var(--clr-text-muted); margin-top: 2px; }
+.summary-print     { font-size: .78rem; color: var(--clr-accent); font-weight: 500; margin-top: 2px; }
+.summary-print-fee { color: var(--clr-green); font-weight: 600; }
+.summary-oos      { font-size: .76rem; color: var(--clr-red); font-weight: 500; margin-top: 2px; }
+.summary-price    { font-weight: 700; white-space: nowrap; padding-top: 2px; }
+
+/* Qty + remove controls inside each summary item */
+.summary-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.qty-ctrl {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.qty-ctrl button {
+  width: 28px; height: 28px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+}
+.qty-ctrl button:hover { background: var(--clr-surface); }
+.qty-ctrl span { width: 28px; text-align: center; font-size: .85rem; font-weight: 600; }
+
+.summary-remove {
+  font-size: .78rem;
+  color: var(--clr-red);
+  text-decoration: underline;
+  padding: 2px 4px;
+  border-radius: var(--radius);
+  transition: opacity var(--transition);
+}
+.summary-remove:hover { opacity: .75; }
+
+/* Fee rows */
+.summary-fee-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: .9rem;
+  padding: 6px 0;
+  color: var(--clr-text-muted);
+}
+.summary-fee-row:last-of-type { padding-bottom: 0; }
+.summary-oos-fee  { color: var(--clr-red); }
+.summary-total    {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 8px 0 0;
+}
+
+/* ─── Contact form ───────────────────────────────────────────────────────── */
+.contact-form { display: flex; flex-direction: column; gap: 14px; }
+
+.req { color: var(--clr-red); margin-left: 2px; }
+.label-hint { font-weight: 400; font-size: .8rem; color: var(--clr-text-muted); text-transform: none; letter-spacing: 0; }
+
+.input-error { border-color: var(--clr-red) !important; }
+.field-error {
+  font-size: .8rem;
+  color: var(--clr-red);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.tel-hint {
+  font-size: .78rem;
+  color: var(--clr-text-muted);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+.info-saved-msg {
+  font-size: .85rem;
+  color: var(--clr-green);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ─── Out-of-stock notice (re-used from Customize) ───────────────────────── */
+.notice {
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: .85rem;
+  line-height: 1.5;
+}
+.notice-warning {
+  background: color-mix(in srgb, #f9a825 15%, var(--clr-surface));
+  border: 1px solid #f9a825;
+  color: #5a3e00;
+}
+
+/* ─── Promo code ─────────────────────────────────────────────────────────── */
+.promo-row {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0;
+}
+.promo-input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-size: .88rem;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  transition: border-color var(--transition);
+}
+.promo-input:focus { outline: none; border-color: var(--clr-accent); }
+.promo-btn { white-space: nowrap; }
+.promo-applied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(46,125,50,.08);
+  border: 1px solid var(--clr-green);
+  border-radius: var(--radius);
+  font-size: .85rem;
+  color: var(--clr-green);
+  margin: 4px 0;
+}
+.promo-remove {
+  font-size: .78rem;
+  color: var(--clr-red);
+  text-decoration: underline;
+  padding: 2px 4px;
+}
+.promo-error {
+  font-size: .8rem;
+  color: var(--clr-red);
+  font-weight: 600;
+  margin-top: 4px;
+}
+.summary-promo-row    { color: var(--clr-green); font-weight: 600; }
+.summary-discount-row { color: var(--clr-green); font-weight: 600; }
+
+/* ─── Payment buttons ────────────────────────────────────────────────────── */
+.payment-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  font-size: .92rem;
+  font-weight: 600;
+  text-align: left;
+  transition: opacity var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+}
+.pay-btn:hover:not(:disabled):not(.pay-btn--disabled) {
+  opacity: .9;
+  box-shadow: var(--shadow-md);
+}
+.pay-btn:disabled { opacity: .6; cursor: not-allowed; }
+.pay-btn__label  { flex: 1; }
+.pay-btn__amount { font-weight: 700; white-space: nowrap; margin-left: 12px; }
+.pay-btn__note   { font-size: .78rem; font-weight: 400; color: inherit; opacity: .75; margin-left: 12px; }
+
+.pay-btn--fygaro {
+  background: var(--clr-accent);
+  color: #fff;
+  border: none;
+}
+.pay-btn--paypal {
+  background: #003087;
+  color: #fff;
+  border: none;
+}
+.pay-btn--cod {
+  background: #1565c0;
+  color: #fff;
+  border: none;
+}
+.pay-btn--disabled {
+  opacity: .55;
+  cursor: default;
+}
+.payment-logos {
+  font-size: .78rem;
+  color: var(--clr-text-muted);
+  text-align: center;
+  margin-top: 4px;
+}
+.paypal-wrap { display: flex; flex-direction: column; gap: 8px; }
+.paypal-note { font-size: .82rem; color: var(--clr-text-muted); }
+
+.divider { border: none; border-top: 1px solid var(--clr-border); margin: 8px 0; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .checkout-layout { grid-template-columns: 1fr; }
+}

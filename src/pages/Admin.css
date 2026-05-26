@@ -1,0 +1,144 @@
+.admin-page { max-width: 900px; }
+.admin-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 24px; }
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--clr-border);
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.admin-tab {
+  padding: 8px 18px;
+  font-size: .88rem;
+  font-weight: 600;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--clr-text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color .15s, border-color .15s;
+}
+.admin-tab:hover { color: var(--clr-text); }
+.admin-tab.active { color: var(--clr-accent); border-bottom-color: var(--clr-accent); }
+
+/* ── Section ─────────────────────────────────────────────────────────────── */
+.admin-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.admin-hint {
+  font-size: .85rem;
+  color: var(--clr-text-muted);
+  margin-bottom: 20px;
+}
+.admin-form { display: flex; flex-direction: column; gap: 16px; max-width: 480px; }
+.admin-empty { color: var(--clr-text-muted); font-size: .9rem; padding: 20px 0; }
+
+.admin-msg { font-size: .88rem; font-weight: 600; color: var(--clr-green); }
+.admin-msg--warn { color: #b45309; }
+
+/* ── Tracking cards ──────────────────────────────────────────────────────── */
+.tracking-list { display: flex; flex-direction: column; gap: 16px; }
+.tracking-card {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+}
+.tracking-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.tracking-order { font-weight: 700; font-size: .9rem; }
+.tracking-name  { font-weight: 600; }
+.tracking-tel   { color: var(--clr-text-muted); font-size: .85rem; }
+.tracking-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+@media (max-width: 600px) { .tracking-fields { grid-template-columns: 1fr; } }
+.tracking-actions { display: flex; gap: 8px; }
+
+/* ── Promo table ─────────────────────────────────────────────────────────── */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+  margin-top: 8px;
+}
+.admin-table th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--clr-text-muted);
+  border-bottom: 2px solid var(--clr-border);
+}
+.admin-table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--clr-border);
+  vertical-align: middle;
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table code {
+  background: var(--clr-surface);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: .82rem;
+}
+
+/* ── Discounts tab ───────────────────────────────────────────────────────── */
+.discount-rule-hint {
+  background: var(--clr-surface);
+  border-left: 3px solid var(--clr-accent);
+  padding: 10px 14px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .83rem;
+  line-height: 1.6;
+  color: var(--clr-text-muted);
+  margin-top: -8px;
+}
+.label-hint {
+  font-weight: 400;
+  font-size: .8rem;
+  color: var(--clr-text-muted);
+  margin-left: 4px;
+}
+
+/* ── Add Jersey tab ──────────────────────────────────────────────────────── */
+.add-jersey-form { display: flex; flex-direction: column; gap: 20px; max-width: 640px; }
+.add-jersey-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .add-jersey-row { grid-template-columns: 1fr; } }
+.add-jersey-half { max-width: 50%; }
+@media (max-width: 600px) { .add-jersey-half { max-width: 100%; } }
+
+.sport-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.sport-tab {
+  padding: 6px 16px; border-radius: 20px; font-size: .85rem; font-weight: 600;
+  border: 2px solid var(--clr-border); color: var(--clr-text-muted);
+  background: transparent; cursor: pointer; transition: all .15s;
+}
+.sport-tab.active { border-color: var(--clr-accent); color: var(--clr-accent); background: #f0f4ff; }
+
+.size-qty-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 500px) { .size-qty-grid { grid-template-columns: repeat(2, 1fr); } }
+.size-qty-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 8px; border: 1px solid var(--clr-border); border-radius: var(--radius);
+  font-size: .85rem; cursor: pointer;
+}
+.size-qty-row.active { border-color: var(--clr-accent); background: #f0f4ff; }
+.size-qty-label { font-weight: 600; min-width: 28px; }
+.size-qty-input { width: 52px; padding: 2px 4px; border: 1px solid var(--clr-border); border-radius: 4px; font-size: .85rem; }
+
+.sale-toggle-row { display: flex; align-items: center; gap: 12px; }
+.sale-toggle-label { display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; }
+.sale-price-input { width: 100px !important; }
+
+/* ── Players tab ─────────────────────────────────────────────────────────── */
+.players-textarea { font-family: monospace; font-size: .88rem; resize: vertical; }
+.players-team-link { color: var(--clr-accent); font-weight: 600; text-decoration: underline; background: none; border: none; cursor: pointer; }
