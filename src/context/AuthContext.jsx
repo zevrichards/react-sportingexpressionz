@@ -64,14 +64,17 @@ export function AuthProvider({ children }) {
           await getRedirectResult(auth);
         } catch (err) {
           if (err.code === 'auth/credential-already-in-use') {
+            // In Firebase 9, err.credential is always undefined —
+            // the credential must be extracted via credentialFromError().
+            const credential  = GoogleAuthProvider.credentialFromError(err);
             const currentUser = auth.currentUser;
             if (currentUser?.isAnonymous) {
               const anonUid   = currentUser.uid;
               const anonItems = await readAndClearAnonCart(anonUid);
-              await signInWithCredential(auth, err.credential);
+              await signInWithCredential(auth, credential);
               await writeCartToAccount(anonItems, auth.currentUser.uid);
             } else {
-              await signInWithCredential(auth, err.credential);
+              await signInWithCredential(auth, credential);
             }
           }
         }
@@ -144,15 +147,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   // ── Google sign-in ───────────────────────────────────────────────────────
-  // Always use redirect (popup is blocked by COOP headers on the custom authDomain).
+  // Dev: popup (redirect session storage is lost on Chrome localhost).
+  // Prod: redirect (popup blocked by mobile browsers — Safari, Instagram, etc.).
   // Result is handled by the getRedirectResult effect above on the next page load.
   const signInWithGoogle = useCallback(async () => {
     const provider    = new GoogleAuthProvider();
     const currentUser = auth.currentUser;
 
     if (IS_DEV) {
-      // Dev: popup via soccerexpressionz-test.firebaseapp.com (no COOP issues
-      // from the live site, and redirect session storage is lost on Chrome).
       if (currentUser?.isAnonymous) {
         try {
           return await linkWithPopup(currentUser, provider);
