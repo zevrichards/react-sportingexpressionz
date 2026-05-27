@@ -4,6 +4,10 @@
   overflow: hidden;
 }
 
+.jersey-swiper .swiper-slide {
+  height: auto;
+}
+
 .slide-inner {
   position: relative;
   width: 100%;
@@ -12,7 +16,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  container-type: inline-size; /* enables cqi units so text scales with container, not viewport */
 }
 
 .preview-img {
@@ -54,7 +57,8 @@
 .jersey-name {
   transform: translateX(-50%);
   letter-spacing: 0.06em;
-  font-size: clamp(0.6rem, 6cqi, 3.4rem);
+  /* --preview-width set by ResizeObserver in JerseyPreview.jsx */
+  font-size: clamp(0.6rem, calc(var(--preview-width, 420px) * 0.06), 3.4rem);
 }
 
 /* Standard position: just below collar */
@@ -67,7 +71,7 @@
 .jersey-number {
   top: 40%;
   transform: translate(-50%, -50%);
-  font-size: clamp(1rem, 32cqi, 16rem);
+  font-size: clamp(1rem, calc(var(--preview-width, 420px) * 0.32), 16rem);
 }
 
 /* Swiper navigation override */

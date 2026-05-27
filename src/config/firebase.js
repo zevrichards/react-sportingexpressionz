@@ -11,7 +11,7 @@ const firebaseConfig = {
   // Prod: use the custom domain as normal.
   authDomain: import.meta.env.DEV
     ? "soccerexpressionz-test.firebaseapp.com"
-    : "soccerexpressionz.com",
+    : "sportingexpressionz.com",
   projectId: "soccerexpressionz-test",
   storageBucket: "soccerexpressionz-test.appspot.com",
   messagingSenderId: "950374214946",

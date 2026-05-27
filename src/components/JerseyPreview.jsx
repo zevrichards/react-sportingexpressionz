@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -29,7 +29,21 @@ export default function JerseyPreview({
   fontColor:    fontColorProp    = null,
   namePosition: namePositionProp = null,
 }) {
+  const wrapperRef = useRef(null);
   const [images, setImages] = useState({ front: imgFrontProp, back: imgBackProp });
+
+  // Keep --preview-width in sync with the wrapper's actual rendered width.
+  // This replaces container-query cqi units (container-type broke Swiper on mobile).
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => {
+      const w = entries[0]?.contentRect.width;
+      if (w) el.style.setProperty('--preview-width', `${w}px`);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Derive font config — Firestore props take priority, then FONT_MAP, then DEFAULT_FONT
   const fontConfig     = FONT_MAP[team] ?? DEFAULT_FONT;
@@ -76,7 +90,7 @@ export default function JerseyPreview({
   const showOverlay = playerName || playerNumber;
 
   return (
-    <div className="jersey-preview-wrapper">
+    <div className="jersey-preview-wrapper" ref={wrapperRef}>
       <Swiper
         modules={[Navigation, Pagination]}
         navigation

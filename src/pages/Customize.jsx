@@ -214,23 +214,24 @@ export default function Customize() {
 
       // Load players + related jerseys for the resolved team
       const resolvedTeam = urlTeam || cascade.team;
+      const sizeMatch = urlSize && cascade.sizeOptions.find(o => o.value === urlSize);
+
+      // Show the jersey immediately — don't wait for players or related jerseys
+      set({
+        leagueOptions, league: startLeague,
+        ...cascade,
+        ...(urlVariant ? { variant: urlVariant } : {}),
+        ...(sizeMatch  ? { size: sizeMatch.value, stockQty: sizeMatch.stockQty ?? null } : {}),
+        loading: false,
+      });
+
+      // Load players + related jerseys in the background
       const [players, relatedJerseys] = await Promise.all([
         loadPlayers(resolvedTeam),
         loadRelated(rootCol, startLeague, resolvedTeam),
       ]);
       setPlayerOptions(players);
-
-      // Restore size from URL if it exists in the loaded sizeOptions
-      const sizeMatch = urlSize && cascade.sizeOptions.find(o => o.value === urlSize);
-
-      set({
-        leagueOptions, league: startLeague,
-        ...cascade,
-        ...(urlVariant                  ? { variant: urlVariant }                  : {}),
-        ...(sizeMatch                   ? { size: sizeMatch.value, stockQty: sizeMatch.stockQty ?? null } : {}),
-        relatedJerseys,
-        loading: false,
-      });
+      set({ relatedJerseys });
     }
     init();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -264,13 +265,16 @@ export default function Customize() {
   // ── Team change ───────────────────────────────────────────────────────────
   const handleTeamChange = useCallback(async (val) => {
     set({ team: val, loading: true });
-    const [cascade, players, relatedJerseys] = await Promise.all([
-      loadCascade(rootCol, state.league, val),
+    const cascade = await loadCascade(rootCol, state.league, val);
+    set({ ...cascade, relatedJerseys: [], loading: false });
+
+    // Players + related load in the background
+    const [players, relatedJerseys] = await Promise.all([
       loadPlayers(val),
       loadRelated(rootCol, state.league, val),
     ]);
     setPlayerOptions(players);
-    set({ ...cascade, relatedJerseys, loading: false });
+    set({ relatedJerseys });
   }, [set, rootCol, state.league]);
 
   // ── Cut change ────────────────────────────────────────────────────────────
@@ -420,19 +424,21 @@ export default function Customize() {
 
     // Load data directly — do not rely on init effect re-running
     set({ loading: true, relatedJerseys: [] });
-    const [cascade, players, relatedJerseys] = await Promise.all([
-      loadCascade(rootCol, r.league, r.team, r.cut, r.sleeve),
-      loadPlayers(r.team),
-      loadRelated(rootCol, r.league, r.team),
-    ]);
-    setPlayerOptions(players);
+    const cascade = await loadCascade(rootCol, r.league, r.team, r.cut, r.sleeve);
     set({
       league: r.league,
       leagueOptions: state.leagueOptions,
       ...cascade,
-      relatedJerseys,
       loading: false,
     });
+
+    // Players + related load in the background
+    const [players, relatedJerseys] = await Promise.all([
+      loadPlayers(r.team),
+      loadRelated(rootCol, r.league, r.team),
+    ]);
+    setPlayerOptions(players);
+    set({ relatedJerseys });
   }, [set, rootCol, sport, navigate, state.leagueOptions]);
 
   return (
@@ -498,7 +504,7 @@ export default function Customize() {
           ) : (
             <>
               <div className="selects-grid">
-                <SelectField label="League"  value={state.league}  options={state.leagueOptions}  onChange={handleLeagueChange} />
+                <SelectField label="Year"    value={state.league}  options={state.leagueOptions}  onChange={handleLeagueChange} />
                 <SelectField label="Team"    value={state.team}    options={state.teamOptions}    onChange={handleTeamChange} />
                 <SelectField label="Cut"     value={state.cut}     options={state.cutOptions}     onChange={handleCutChange} />
                 <SelectField label="Sleeve"  value={state.sleeve}  options={state.sleeveOptions}  onChange={handleSleeveChange} />

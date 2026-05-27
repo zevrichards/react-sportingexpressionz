@@ -311,6 +311,9 @@
 .end-of-feed         { text-align: center; color: var(--clr-text-muted); font-size: .85rem; padding: 24px 0; }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
+/* ─── Filter column wrappers (desktop: transparent pass-through) ─────────── */
+.filter-col { display: contents; }
+
 @media (max-width: 768px) {
   .home-layout {
     grid-template-columns: 1fr;
@@ -318,11 +321,47 @@
   .filter-sidebar {
     position: static;
     max-height: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 8px;
+    padding: 8px;
+    align-items: start;
   }
+  /* On mobile the col wrappers become real columns */
+  .filter-col { display: block; }
+  .filter-col--year { grid-column: 1; }
+  .filter-col--rest {
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 8px;
+    align-items: start;
+  }
+  /* Tighter buttons and headings on mobile */
+  .filter-heading { margin-bottom: 4px; }
+  .filter-btn { padding: 4px 6px; font-size: .82rem; }
+  /* Cut and Sleeve sit side by side */
+  .filter-col--rest .filter-section { margin-bottom: 8px; }
+  .filter-col--year .filter-section { margin-bottom: 0; }
+  /* Size (last section) spans both inner columns */
+  .filter-col--rest .filter-section:last-child {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
   .sidebar-title { display: none; }
-  .filter-section { margin-bottom: 0; }
+}
+
+@media (max-width: 600px) {
+  .jersey-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .card-img-placeholder { height: 130px; font-size: 2rem; }
+  .card-body    { padding: 8px; }
+  .card-title   { font-size: .82rem; }
+  .card-league  { font-size: .65rem; }
+  .card-details { font-size: .68rem; }
+  .card-sizes   { font-size: .65rem; }
+  .card-price   { font-size: .78rem; }
 }

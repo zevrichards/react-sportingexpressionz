@@ -224,14 +224,14 @@ function AddJerseyTab() {
         {/* League row */}
         <div className="add-jersey-row">
           <div className="form-group">
-            <label className="form-label">League (select)</label>
+            <label className="form-label">Year (select)</label>
             <select className="form-input" value={leagueInput}
               onChange={e => setLeagueInput(e.target.value)}>
               {leagueOptions.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">League (or type new)</label>
+            <label className="form-label">Year (or type new)</label>
             <input className="form-input" value={leagueInput}
               onChange={e => setLeagueInput(e.target.value)}
               placeholder="e.g. Premier League" />
@@ -894,7 +894,7 @@ function SalePriceTab() {
       <SportTabs sport={sport} setSport={setSport} />
       <form onSubmit={handleUpdate} className="admin-form">
         <div className="form-group">
-          <label className="form-label">League / Season</label>
+          <label className="form-label">Year</label>
           <select className="form-input" value={league} onChange={e => setLeague(e.target.value)}>
             {leagues.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
@@ -997,7 +997,7 @@ function StockCleanupTab() {
       <SportTabs sport={sport} setSport={setSport} />
       <form onSubmit={handleCleanup} className="admin-form">
         <div className="form-group">
-          <label className="form-label">League / Season</label>
+          <label className="form-label">Year</label>
           <select className="form-input" value={league} onChange={e => setLeague(e.target.value)}>
             {leagues.map(l => <option key={l} value={l}>{l}</option>)}
           </select>

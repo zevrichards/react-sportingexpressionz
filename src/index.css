@@ -94,6 +94,7 @@ ul { list-style: none; }
   max-width: 420px;
   margin: 0 auto;
   user-select: none;
+  /* container-type removed — CSS size containment causes Swiper to measure 0-width on mobile */
 }
 .jersey-preview-wrapper .preview-img {
   width: 100%;

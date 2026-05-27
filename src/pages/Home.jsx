@@ -379,75 +379,80 @@ export default function Home() {
         <aside className="filter-sidebar">
           <h2 className="sidebar-title">Filter</h2>
 
-          {/* League */}
-          <div className="filter-section">
-            <p className="filter-heading">League</p>
-            <FilterChip label="All Leagues" active={!selectedLeague} onClick={() => setParam('league', '')} />
-            {leagues.map(lg => (
-              <FilterChip key={lg} label={lg} active={selectedLeague === lg}
-                onClick={() => setParam('league', lg)} />
-            ))}
+          {/* Year — left column on mobile */}
+          <div className="filter-col filter-col--year">
+            <div className="filter-section">
+              <p className="filter-heading">Year</p>
+              <FilterChip label="All Years" active={!selectedLeague} onClick={() => setParam('league', '')} />
+              {leagues.map(lg => (
+                <FilterChip key={lg} label={lg} active={selectedLeague === lg}
+                  onClick={() => setParam('league', lg)} />
+              ))}
+            </div>
           </div>
 
-          {/* Team (drill-down when league selected) */}
-          {sidebarTeams.length > 0 && (
-            <div className="filter-section">
-              <p className="filter-heading">Team</p>
-              <FilterChip label="All Teams" active={!searchQuery} onClick={() => {
-                setSearchInput('');
-                setParam('search', '');
-              }} />
-              {sidebarTeams.map(t => (
-                <FilterChip key={t.name} label={t.name}
-                  active={searchTerms.length === 1 && searchTerms[0] === t.name.toLowerCase()}
-                  onClick={() => {
-                    setSearchInput(t.name);
-                    setParam('search', t.name);
-                  }} />
-              ))}
-            </div>
-          )}
-
-          {/* Cut */}
-          {displayCuts.length > 0 && (
-            <div className="filter-section">
-              <p className="filter-heading">Cut</p>
-              <FilterChip label="All Cuts" active={!selectedCut} onClick={() => setParam('cut', '')} />
-              {displayCuts.map(c => (
-                <FilterChip key={c} label={c} active={selectedCut === c}
-                  onClick={() => setParam('cut', c)} />
-              ))}
-            </div>
-          )}
-
-          {/* Sleeve */}
-          {displaySleeves.length > 0 && (
-            <div className="filter-section">
-              <p className="filter-heading">Sleeve</p>
-              <FilterChip label="All Sleeves" active={!selectedSleeve} onClick={() => setParam('sleeve', '')} />
-              {displaySleeves.map(s => (
-                <FilterChip key={s} label={s} active={selectedSleeve === s}
-                  onClick={() => setParam('sleeve', s)} />
-              ))}
-            </div>
-          )}
-
-          {/* Size */}
-          {displaySizes.length > 0 && (
-            <div className="filter-section">
-              <p className="filter-heading">Size</p>
-              <FilterChip label="All Sizes" active={!selectedSize} onClick={() => setParam('size', '')} />
-              <div className="size-chip-row">
-                {displaySizes.map(sz => (
-                  <button key={sz}
-                    className={`size-chip${selectedSize === sz ? ' active' : ''}`}
-                    onClick={() => setParam('size', sz)}>
-                    {sz}
-                  </button>
+          {/* Cut / Sleeve / Size / Team — right column on mobile */}
+          <div className="filter-col filter-col--rest">
+            {/* Team (drill-down when league selected) */}
+            {sidebarTeams.length > 0 && (
+              <div className="filter-section">
+                <p className="filter-heading">Team</p>
+                <FilterChip label="All Teams" active={!searchQuery} onClick={() => {
+                  setSearchInput('');
+                  setParam('search', '');
+                }} />
+                {sidebarTeams.map(t => (
+                  <FilterChip key={t.name} label={t.name}
+                    active={searchTerms.length === 1 && searchTerms[0] === t.name.toLowerCase()}
+                    onClick={() => {
+                      setSearchInput(t.name);
+                      setParam('search', t.name);
+                    }} />
                 ))}
               </div>
-            </div>
-          )}
+            )}
+
+            {/* Cut */}
+            {displayCuts.length > 0 && (
+              <div className="filter-section">
+                <p className="filter-heading">Cut</p>
+                <FilterChip label="All Cuts" active={!selectedCut} onClick={() => setParam('cut', '')} />
+                {displayCuts.map(c => (
+                  <FilterChip key={c} label={c} active={selectedCut === c}
+                    onClick={() => setParam('cut', c)} />
+                ))}
+              </div>
+            )}
+
+            {/* Sleeve */}
+            {displaySleeves.length > 0 && (
+              <div className="filter-section">
+                <p className="filter-heading">Sleeve</p>
+                <FilterChip label="All Sleeves" active={!selectedSleeve} onClick={() => setParam('sleeve', '')} />
+                {displaySleeves.map(s => (
+                  <FilterChip key={s} label={s} active={selectedSleeve === s}
+                    onClick={() => setParam('sleeve', s)} />
+                ))}
+              </div>
+            )}
+
+            {/* Size */}
+            {displaySizes.length > 0 && (
+              <div className="filter-section">
+                <p className="filter-heading">Size</p>
+                <FilterChip label="All Sizes" active={!selectedSize} onClick={() => setParam('size', '')} />
+                <div className="size-chip-row">
+                  {displaySizes.map(sz => (
+                    <button key={sz}
+                      className={`size-chip${selectedSize === sz ? ' active' : ''}`}
+                      onClick={() => setParam('size', sz)}>
+                      {sz}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </aside>
 
         {/* ── Grid area ────────────────────────────────────────────────── */}

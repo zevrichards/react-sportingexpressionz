@@ -147,7 +147,6 @@
 }
 
 @media (max-width: 480px) {
-  .selects-grid { grid-template-columns: 1fr; }
   .controls-title { font-size: 1.3rem; }
 }
 
