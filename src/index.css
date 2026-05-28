@@ -18,6 +18,7 @@
 @font-face { font-family: 'AdidasWCFont';      src: url('./fonts/Adidas WC 26_NeroDesign.otf') format('opentype'); }
 @font-face { font-family: 'NikeWCFont';        src: url('./fonts/Nike World Cup Font 2022.otf') format('opentype'); }
 @font-face { font-family: 'PSGFont';           src: url('./fonts/PSG Font 2021-2022.otf') format('opentype'); }
+@font-face { font-family: 'HandelGothic';      src: url('./fonts/Handel Gothic D Bold.otf') format('opentype'); }
 
 /* ─── Reset / Base ──────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
