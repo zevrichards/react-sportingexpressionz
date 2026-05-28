@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +10,10 @@ import './Header.css';
 export default function Header() {
   const { user } = useAuth();
   const { count, setOpen, saleNotice } = useCart();
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const sport     = new URLSearchParams(location.search).get('sport') || 'Football';
+  const sportEmoji = { Football: '⚽', F1: '🏎️', Basketball: '🏀' }[sport] ?? '⚽';
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [theme, setTheme] = useState(() => {
@@ -81,7 +84,7 @@ export default function Header() {
 
           {/* Logo */}
           <Link to="/" className="logo">
-            ⚽ <span>Sporting</span>Expressionz
+            {sportEmoji} <span>Sporting</span>Expressionz
           </Link>
 
           {/* Nav */}

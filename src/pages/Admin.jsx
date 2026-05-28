@@ -21,13 +21,8 @@ const TABS = [
   { id: 'stock',     label: 'Stock Cleanup' },
 ];
 
-const SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL', 'Any'];
-
-function sizeLabel(size, cut) {
-  if (cut !== 'Youth') return size;
-  const map = { XXS: 'XXS (16)', XS: 'XS (18)', S: 'S (20)', M: 'M (22)', L: 'L (24)', XL: 'XL (26)', '2XL': '2XL (28)', Any: 'Any' };
-  return map[size] || size;
-}
+const SIZES       = ['S', 'M', 'L', 'XL', '2XL', 'Any'];
+const YOUTH_SIZES = ['XXS (16)', 'XS (18)', 'S (20)', 'M (22)', 'L (24)', 'XL (26)', '2XL (28)'];
 
 const SPORT_LIST = [
   { key: 'Football',   label: 'Football',   emoji: '⚽' },
@@ -114,7 +109,7 @@ function AddJerseyTab() {
     setSizes(prev => {
       const next = { ...prev };
       if (next[size] !== undefined) { delete next[size]; }
-      else { next[size] = 1; }
+      else { next[size] = 0; }
       return next;
     });
   };
@@ -172,9 +167,8 @@ function AddJerseyTab() {
       // Write sizes
       setMsg('Writing sizes…');
       for (const [size, qty] of Object.entries(sizes)) {
-        const sizeKey = sizeLabel(size, cut);
-        const sizeRef = doc(variantRef, 'Sizes', sizeKey);
-        await setDoc(sizeRef, { Size: sizeKey, StockQuantity: Number(qty) }, { merge: true });
+        const sizeRef = doc(variantRef, 'Sizes', size);
+        await setDoc(sizeRef, { Size: size, StockQuantity: Number(qty) }, { merge: true });
       }
 
       // Upload front image
@@ -344,12 +338,12 @@ function AddJerseyTab() {
         <div className="form-group">
           <label className="form-label">Sizes (check to add quantity)</label>
           <div className="size-qty-grid">
-            {SIZES.map(size => {
+            {(cut === 'Youth' ? YOUTH_SIZES : SIZES).map(size => {
               const active = sizes[size] !== undefined;
               return (
                 <div key={size} className={`size-qty-row${active ? ' active' : ''}`}
                   onClick={() => toggleSize(size)}>
-                  <span className="size-qty-label">{sizeLabel(size, cut)}</span>
+                  <span className="size-qty-label">{size}</span>
                   {active && (
                     <input
                       className="size-qty-input"
@@ -368,14 +362,14 @@ function AddJerseyTab() {
 
         {/* Images */}
         <div className="form-group">
-          <label className="form-label">Front Image (required)</label>
-          <input type="file" className="form-input add-jersey-file-input" accept="image/*"
-            onChange={e => setFrontFile(e.target.files[0] || null)} />
-        </div>
-        <div className="form-group">
           <label className="form-label">Back Image (optional)</label>
           <input type="file" className="form-input add-jersey-file-input" accept="image/*"
             onChange={e => setBackFile(e.target.files[0] || null)} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Front Image (required)</label>
+          <input type="file" className="form-input add-jersey-file-input" accept="image/*"
+            onChange={e => setFrontFile(e.target.files[0] || null)} />
         </div>
 
         {msg && <p className={`admin-msg${msg.startsWith('Error') ? ' admin-msg--warn' : ''}`}>{msg}</p>}

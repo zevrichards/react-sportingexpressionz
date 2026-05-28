@@ -142,7 +142,7 @@ export default function Home() {
   const [hasMore,       setHasMore]       = useState(true);
 
   // In-stock filter — defaults to on
-  const [inStockOnly, setInStockOnly] = useState(true);
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   // Local input state — debounced to URL
   const [searchInput, setSearchInput] = useState('');
@@ -488,7 +488,7 @@ export default function Home() {
                 <span className="stock-toggle-thumb" />
               </span>
               <span className="stock-toggle-label">
-                {inStockOnly ? 'In Stock Only' : 'Show All'}
+                In Stock Only
               </span>
             </button>
           </div>
