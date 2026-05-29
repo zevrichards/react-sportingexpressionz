@@ -377,6 +377,7 @@ export default function Customize() {
 
   // Full (non-sale) price based on cut — always used as the crossed-out original
   const jerseyPrice = (() => {
+    if (state.league === 'Your Custom Jersey')         return GlobalJerseyPrice.Custom;
     const c = state.cut.toLowerCase();
     if (c.includes('youth'))                           return GlobalJerseyPrice.Youth;
     if (c.includes('womens') || c.includes("women's")) return GlobalJerseyPrice.Womens;

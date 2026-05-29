@@ -33,7 +33,7 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 export const GlobalJerseyPrice = {
-  Custom: 150,
+  Custom: 50,
   Youth: 300,
   Womens: 350,
   MensShort: 350,

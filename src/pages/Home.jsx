@@ -4,8 +4,9 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db, GlobalJerseyPrice, SPORT_COLLECTIONS } from '../config/firebase';
 import './Home.css';
 
-function calcPrice(cut, salePrice) {
+function calcPrice(cut, salePrice, league) {
   if (salePrice) return salePrice;
+  if (league === 'Your Custom Jersey')                return GlobalJerseyPrice.Custom;
   const c = (cut || '').toLowerCase();
   if (c.includes('youth'))                            return GlobalJerseyPrice.Youth;
   if (c.includes('womens') || c.includes("women's")) return GlobalJerseyPrice.Womens;
@@ -55,7 +56,7 @@ async function loadTeamJerseys(rootCol, league, team) {
           league, team, cut, sleeve,
           variant:        vd.data().Variant,
           imgFront:       vd.data().JerseyImgFront,
-          price:          calcPrice(cut, salePrice || undefined),
+          price:          calcPrice(cut, salePrice || undefined, league),
           salePrice:      salePrice || undefined,
           totalStock:     null,   // populated in phase 2
           hasStock:       null,   // null = "not yet known" — never filtered out
@@ -109,7 +110,7 @@ function JerseyCard({ sport, league, team, cut, sleeve, variant, imgFront, price
           {salePrice ? (
             <>
               <span className="price-sale">${salePrice}</span>
-              <span className="price-original">${calcPrice(cut)}</span>
+              <span className="price-original">${calcPrice(cut, undefined, league)}</span>
               <span className="badge badge-sale">Sale</span>
             </>
           ) : (
