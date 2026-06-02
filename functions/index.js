@@ -108,7 +108,7 @@ async function fulfillOrder({ orderNumber, transactionId, amount, provider }) {
 
   // Add to tracking collection so admin can send a tracking email later
   db.collection("tracking").doc(orderNumber).set({
-    ordernumber:       orderNumber,
+    orderNumber:       orderNumber,
     DeliveryName:      pendingOrder.DeliveryName      || "",
     DeliveryTelNumber: pendingOrder.DeliveryTelNumber || "",
     Email:             pendingOrder.email || user.email || "",
@@ -122,7 +122,7 @@ async function fulfillOrder({ orderNumber, transactionId, amount, provider }) {
     template: {
       name: "receipt",
       data: {
-        ordernumber: orderNumber,
+        orderNumber: orderNumber,
         total:       amount,
         items:       itemsArray,
         receipt:     true,
