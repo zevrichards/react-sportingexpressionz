@@ -334,12 +334,16 @@ export default function Customize() {
     );
     const variantDoc = variantSnap.docs.find(d => d.data().Variant === val);
     let sizeOptions  = [];
+    let imgFront     = '';
+    let imgBack      = '';
     let fontColor    = null;
     let namePosition = null;
     if (variantDoc) {
       const vd      = variantDoc.data();
-      fontColor     = vd.FontColor    || null;
-      namePosition  = vd.NamePosition || null;
+      imgFront      = vd.JerseyImgFront || '';
+      imgBack       = vd.JerseyImgBack  || '';
+      fontColor     = vd.FontColor      || null;
+      namePosition  = vd.NamePosition   || null;
       const sizeSnap = await getDocs(collection(variantDoc.ref, 'Sizes'));
       sizeOptions = sizeSnap.docs.map(d => ({
         value: d.data().Size, label: d.data().Size,
@@ -351,7 +355,7 @@ export default function Customize() {
       sizeOptions,
       size:     firstSize?.value || '',
       stockQty: firstSize?.stockQty ?? null,
-      fontColor, namePosition, loading: false,
+      imgFront, imgBack, fontColor, namePosition, loading: false,
     });
   }, [set, rootCol, state.league, state.team, state.cut, state.sleeve]);
 
