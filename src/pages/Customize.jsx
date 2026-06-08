@@ -47,7 +47,7 @@ function SelectField({ label, value, options, onChange, disabled }) {
             <option
               key={o.value}
               value={o.value}
-              disabled={o.stockQty === 0}
+              disabled={false}
             >
               {o.label}{o.stockQty === 0 ? ' — Out of Stock' : ''}
             </option>
