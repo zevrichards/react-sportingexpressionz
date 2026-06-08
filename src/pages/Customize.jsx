@@ -180,7 +180,7 @@ export default function Customize() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const set = useCallback((payload) => dispatch({ type: 'SET', payload }), []);
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate       = useNavigate();
+  const navigate          = useNavigate();
   const { addItem }    = useCart();
   const [playerOptions, setPlayerOptions] = useState([]);
 
@@ -334,16 +334,12 @@ export default function Customize() {
     );
     const variantDoc = variantSnap.docs.find(d => d.data().Variant === val);
     let sizeOptions  = [];
-    let imgFront     = '';
-    let imgBack      = '';
     let fontColor    = null;
     let namePosition = null;
     if (variantDoc) {
       const vd      = variantDoc.data();
-      imgFront      = vd.JerseyImgFront  || '';
-      imgBack       = vd.JerseyImgBack   || '';
-      fontColor     = vd.FontColor       || null;
-      namePosition  = vd.NamePosition    || null;
+      fontColor     = vd.FontColor    || null;
+      namePosition  = vd.NamePosition || null;
       const sizeSnap = await getDocs(collection(variantDoc.ref, 'Sizes'));
       sizeOptions = sizeSnap.docs.map(d => ({
         value: d.data().Size, label: d.data().Size,
@@ -355,7 +351,7 @@ export default function Customize() {
       sizeOptions,
       size:     firstSize?.value || '',
       stockQty: firstSize?.stockQty ?? null,
-      imgFront, imgBack, fontColor, namePosition, loading: false,
+      fontColor, namePosition, loading: false,
     });
   }, [set, rootCol, state.league, state.team, state.cut, state.sleeve]);
 
@@ -452,7 +448,6 @@ export default function Customize() {
             league={state.league}  team={state.team}
             cut={state.cut}        sleeve={state.sleeve}  variant={state.variant}
             rootCol={rootCol}
-            imgFront={state.imgFront}  imgBack={state.imgBack}
             fontColor={state.fontColor}
             namePosition={state.namePosition}
             playerName={state.customizeEnabled   ? state.playerName   : ''}

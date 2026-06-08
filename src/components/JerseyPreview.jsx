@@ -10,10 +10,8 @@ import './JerseyPreview.css';
 
 /**
  * Props
- *   league, team, cut, sleeve, variant  — used to fetch images when not passed directly
+ *   league, team, cut, sleeve, variant  — drives the Firestore image fetch
  *   rootCol         — Firestore root collection (default 'Leagues')
- *   imgFront        — direct URL (skips Firestore fetch when provided)
- *   imgBack         — direct URL (skips Firestore fetch when provided)
  *   playerName      — text to display on back
  *   playerNumber    — number to display on back
  *   fontColor       — CSS colour; overrides FONT_MAP fallback
@@ -22,18 +20,15 @@ import './JerseyPreview.css';
 export default function JerseyPreview({
   league, team, cut, sleeve, variant,
   rootCol = 'Leagues',
-  imgFront: imgFrontProp = '',
-  imgBack:  imgBackProp  = '',
   playerName   = '',
   playerNumber = '',
   fontColor:    fontColorProp    = null,
   namePosition: namePositionProp = null,
 }) {
   const wrapperRef = useRef(null);
-  const [images, setImages] = useState({ front: imgFrontProp, back: imgBackProp });
+  const [images, setImages] = useState({ front: '', back: '' });
 
   // Keep --preview-width in sync with the wrapper's actual rendered width.
-  // This replaces container-query cqi units (container-type broke Swiper on mobile).
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
@@ -46,30 +41,21 @@ export default function JerseyPreview({
   }, []);
 
   // Derive font config — Firestore props take priority, then FONT_MAP, then DEFAULT_FONT
-  const fontConfig     = FONT_MAP[team] ?? DEFAULT_FONT;
-  const fontFamily     = fontConfig.fontFamily;
-  const fontColor      = fontColorProp    || fontConfig.color        || 'white';
-  const namePosition   = namePositionProp || fontConfig.namePosition || 'top';
+  const fontConfig   = FONT_MAP[team] ?? DEFAULT_FONT;
+  const fontFamily   = fontConfig.fontFamily;
+  const fontColor    = fontColorProp    || fontConfig.color        || 'white';
+  const namePosition = namePositionProp || fontConfig.namePosition || 'top';
 
-  // Sync when props change (e.g. parent already loaded the images)
+  // Re-fetch images whenever the selection changes.
   useEffect(() => {
-    if (imgFrontProp || imgBackProp) {
-      setImages({ front: imgFrontProp, back: imgBackProp });
-    }
-  }, [imgFrontProp, imgBackProp]);
-
-  // Fetch from Firestore only when no direct image props
-  useEffect(() => {
-    if (imgFrontProp || imgBackProp) return; // already have images
     if (!league || !team || !cut || !sleeve || !variant) return;
 
     async function fetchImages() {
       try {
-        const variantsRef = collection(
+        const snap = await getDocs(collection(
           db, rootCol, league, 'Teams', team,
           'Cuts', cut, 'Sleeves', sleeve, 'Variants'
-        );
-        const snap = await getDocs(variantsRef);
+        ));
         for (const d of snap.docs) {
           if (d.data().Variant === variant) {
             setImages({
@@ -86,8 +72,6 @@ export default function JerseyPreview({
     fetchImages();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [league, team, cut, sleeve, variant, rootCol]);
-
-  const showOverlay = playerName || playerNumber;
 
   return (
     <div className="jersey-preview-wrapper" ref={wrapperRef}>
@@ -108,7 +92,6 @@ export default function JerseyPreview({
               <div className="preview-placeholder"><span>Back</span></div>
             )}
 
-            {/* Player name — top (standard) or bottom (Bundesliga) */}
             {playerName && (
               <span
                 aria-hidden="true"
@@ -119,7 +102,6 @@ export default function JerseyPreview({
               </span>
             )}
 
-            {/* Squad number — always centred */}
             {playerNumber && (
               <span
                 aria-hidden="true"
