@@ -938,42 +938,83 @@ function StockCleanupTab() {
     e.preventDefault();
     if (!window.confirm(
       `This will permanently delete all Size documents with StockQuantity = 0 in "${league}", ` +
-      `then cascade-delete any Variants / Sleeves / Cuts / Teams left empty.\n\nContinue?`
+      `then cascade-delete any Variants / Sleeves / Cuts / Teams that are left empty.\n\nContinue?`
     )) return;
 
     setLoading(true);
     setMsg('');
-    let deleted = 0;
+    let deletedSizes = 0, deletedVariants = 0, deletedSleeves = 0, deletedCuts = 0, deletedTeams = 0;
 
     try {
       const teamsSnap = await getDocs(collection(db, rootCol, league, 'Teams'));
+
       for (const team of teamsSnap.docs) {
         const cutsSnap = await getDocs(collection(db, rootCol, league, 'Teams', team.id, 'Cuts'));
-        if (cutsSnap.empty) { await deleteDoc(team.ref); continue; }
+        let remainingCuts = cutsSnap.docs.length;
 
         for (const cut of cutsSnap.docs) {
           const sleevesSnap = await getDocs(collection(db, rootCol, league, 'Teams', team.id, 'Cuts', cut.id, 'Sleeves'));
-          if (sleevesSnap.empty) { await deleteDoc(cut.ref); continue; }
+          let remainingSleeves = sleevesSnap.docs.length;
 
           for (const sleeve of sleevesSnap.docs) {
             const variantsSnap = await getDocs(collection(db, rootCol, league, 'Teams', team.id, 'Cuts', cut.id, 'Sleeves', sleeve.id, 'Variants'));
-            if (variantsSnap.empty) { await deleteDoc(sleeve.ref); continue; }
+            let remainingVariants = variantsSnap.docs.length;
 
             for (const variant of variantsSnap.docs) {
               const sizesSnap = await getDocs(collection(db, rootCol, league, 'Teams', team.id, 'Cuts', cut.id, 'Sleeves', sleeve.id, 'Variants', variant.id, 'Sizes'));
-              if (sizesSnap.empty) { await deleteDoc(variant.ref); continue; }
+              let remainingSizes = sizesSnap.docs.length;
 
+              // ── 1. Delete zero-stock sizes ──────────────────────────────────
               for (const size of sizesSnap.docs) {
                 if ((size.data().StockQuantity ?? 0) === 0) {
                   await deleteDoc(size.ref);
-                  deleted++;
+                  deletedSizes++;
+                  remainingSizes--;
                 }
               }
+
+              // ── 2. Variant is now empty → delete it ─────────────────────────
+              if (remainingSizes === 0) {
+                await deleteDoc(variant.ref);
+                deletedVariants++;
+                remainingVariants--;
+              }
+            }
+
+            // ── 3. Sleeve is now empty → delete it ──────────────────────────
+            if (remainingVariants === 0) {
+              await deleteDoc(sleeve.ref);
+              deletedSleeves++;
+              remainingSleeves--;
             }
           }
+
+          // ── 4. Cut is now empty → delete it ─────────────────────────────
+          if (remainingSleeves === 0) {
+            await deleteDoc(cut.ref);
+            deletedCuts++;
+            remainingCuts--;
+          }
+        }
+
+        // ── 5. Team is now empty → delete it ──────────────────────────────
+        if (remainingCuts === 0) {
+          await deleteDoc(team.ref);
+          deletedTeams++;
         }
       }
-      setMsg(`✓ Removed ${deleted} zero-stock size records from "${league}". Run again if parent docs still appear empty.`);
+
+      const parts = [];
+      if (deletedSizes)    parts.push(`${deletedSizes} size${deletedSizes    !== 1 ? 's' : ''}`);
+      if (deletedVariants) parts.push(`${deletedVariants} variant${deletedVariants !== 1 ? 's' : ''}`);
+      if (deletedSleeves)  parts.push(`${deletedSleeves} sleeve${deletedSleeves  !== 1 ? 's' : ''}`);
+      if (deletedCuts)     parts.push(`${deletedCuts} cut${deletedCuts      !== 1 ? 's' : ''}`);
+      if (deletedTeams)    parts.push(`${deletedTeams} team${deletedTeams    !== 1 ? 's' : ''}`);
+
+      setMsg(parts.length
+        ? `✓ Removed: ${parts.join(', ')} from "${league}".`
+        : `✓ Nothing to remove in "${league}" — all sizes already have stock.`
+      );
     } catch (err) {
       console.error(err);
       setMsg('Error during cleanup — check console.');
@@ -985,8 +1026,8 @@ function StockCleanupTab() {
     <div className="admin-section">
       <h2 className="admin-section-title">Remove Zero-Stock Entries</h2>
       <p className="admin-hint">
-        Deletes all Size documents where <code>StockQuantity = 0</code>, then cascades up to remove
-        empty Variant / Sleeve / Cut / Team documents. Run multiple times if needed.
+        Deletes all Size documents where <code>StockQuantity = 0</code>, then cascades up in a single
+        pass to remove any Variant / Sleeve / Cut / Team that becomes empty as a result.
       </p>
       <SportTabs sport={sport} setSport={setSport} />
       <form onSubmit={handleCleanup} className="admin-form">
