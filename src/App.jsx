@@ -13,6 +13,7 @@ import Checkout from './pages/Checkout';
 import Reviews from './pages/Reviews';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Admin from './pages/Admin';
+import DataDeletion from './pages/DataDeletion';
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
               <Route path="/reviews"            element={<Reviews />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/admin"             element={<Admin />} />
+              <Route path="/data-deletion"    element={<DataDeletion />} />
             </Routes>
             <Footer />
           </div>
