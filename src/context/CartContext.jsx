@@ -64,6 +64,9 @@ export function CartProvider({ children }) {
 
   const addItem = useCallback(async (jersey) => {
     if (!user) return;
+    // Composite key — uniquely identifies a jersey configuration including
+    // personalisation. Two items with the same spec but different names/numbers
+    // are treated as separate line items.
     const id = [jersey.Team, jersey.Cut, jersey.Sleeve, jersey.Variant, jersey.Size, jersey.PlayerName, jersey.PlayerNumber]
       .join('-').replace(/\s+/g, '_');
     const ref = doc(db, 'Users', user.uid, 'Cart', id);

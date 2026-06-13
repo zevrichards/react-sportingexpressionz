@@ -196,6 +196,15 @@ export default function Checkout() {
   };
 
   // ── Create pending order + clear cart ────────────────────────────────────
+  // Writes the order to two locations:
+  //   PendingOrders/{orderNumber}        — top-level, so server-side webhook
+  //                                        handlers can look it up by order number
+  //                                        without knowing the user UID.
+  //   Users/{uid}/Orders/{orderNumber}   — user-scoped, for order history and
+  //                                        the resume-unpaid-order check.
+  // Cart items are copied to the order subcollection here but the cart itself
+  // is NOT cleared — the fulfillOrder Cloud Function clears it after payment
+  // is confirmed, preventing cart loss if the payment tab is closed early.
   async function createPendingOrder() {
     const orderNumber = Date.now().toString();
     const shippingMsg = hasOutOfStock

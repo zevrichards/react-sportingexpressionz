@@ -59,6 +59,13 @@ function SelectField({ label, value, options, onChange, disabled }) {
 }
 
 // ── Single cascading loader ───────────────────────────────────────────────────
+// Resolves a full jersey configuration by walking the Firestore hierarchy:
+//   {rootCollection}/{league}/Teams/{team}/Cuts/{cut}/Sleeves/{sleeve}/Variants/{variant}/Sizes
+//
+// rootCollection maps to a sport (e.g. 'Football', 'Cricket') — defined in
+// SPORT_COLLECTIONS in firebase.js. Each level re-uses the last valid selection
+// from state, or falls back to the last item in the list if the previous
+// selection no longer exists (e.g. after switching league).
 async function loadCascade(rootCol, league, team = null, cut = null, sleeve = null) {
   // 1. Teams
   const teamSnap   = await getDocs(collection(db, rootCol, league, 'Teams'));
