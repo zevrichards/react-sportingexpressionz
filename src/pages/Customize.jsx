@@ -66,7 +66,7 @@ function SelectField({ label, value, options, onChange, disabled }) {
 // SPORT_COLLECTIONS in firebase.js. Each level re-uses the last valid selection
 // from state, or falls back to the last item in the list if the previous
 // selection no longer exists (e.g. after switching league).
-async function loadCascade(rootCol, league, team = null, cut = null, sleeve = null) {
+async function loadCascade(rootCol, league, team = null, cut = null, sleeve = null, variant = null) {
   // 1. Teams
   const teamSnap   = await getDocs(collection(db, rootCol, league, 'Teams'));
   const teamOptions = teamSnap.docs.map(d => ({ value: d.data().Team || d.id, label: d.data().Team || d.id }));
@@ -95,7 +95,8 @@ async function loadCascade(rootCol, league, team = null, cut = null, sleeve = nu
     collection(db, rootCol, league, 'Teams', resolvedTeam, 'Cuts', resolvedCut, 'Sleeves', resolvedSleeve, 'Variants')
   );
   const variantOptions = variantSnap.docs.map(d => ({ value: d.data().Variant, label: d.data().Variant }));
-  const resolvedVariant = variantOptions[0]?.value || '';
+  const resolvedVariant = variant && variantOptions.some(o => o.value === variant)
+    ? variant : variantOptions[0]?.value || '';
 
   // 5. Sizes + images + overlay config from the resolved Variant doc
   let sizeOptions  = [];
@@ -217,7 +218,7 @@ export default function Customize() {
 
       if (!startLeague) { set({ leagueOptions, loading: false }); return; }
 
-      const cascade = await loadCascade(rootCol, startLeague, urlTeam, urlCut, urlSleeve);
+      const cascade = await loadCascade(rootCol, startLeague, urlTeam, urlCut, urlSleeve, urlVariant);
 
       // Load players + related jerseys for the resolved team
       const resolvedTeam = urlTeam || cascade.team;
@@ -227,8 +228,7 @@ export default function Customize() {
       set({
         leagueOptions, league: startLeague,
         ...cascade,
-        ...(urlVariant ? { variant: urlVariant } : {}),
-        ...(sizeMatch  ? { size: sizeMatch.value, stockQty: sizeMatch.stockQty ?? null } : {}),
+        ...(sizeMatch ? { size: sizeMatch.value, stockQty: sizeMatch.stockQty ?? null } : {}),
         loading: false,
       });
 
