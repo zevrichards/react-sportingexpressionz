@@ -117,7 +117,7 @@ async function fulfillOrder({ orderNumber, transactionId, amount, provider }) {
 
   // Send receipt email via Firestore-triggered mail extension
   db.collection("mail").add({
-    to:  user.email || pendingOrder.email,
+    to:   pendingOrder.email || user.email,
     cc:  "sportingexpressionztt@gmail.com",
     template: {
       name: "receipt",
@@ -125,13 +125,13 @@ async function fulfillOrder({ orderNumber, transactionId, amount, provider }) {
         orderNumber: orderNumber,
         total:       amount,
         items:       itemsArray,
-        receipt:     true,
+        receipt:     provider !== "COD",
         COD:         provider === "COD",
-        name:        user.Contact?.name || "",
-        address01:   user.Contact?.address1 || "",
-        address02:   user.Contact?.address2 || "",
-        city:        user.Contact?.city || "",
-        contactnumber: user.Contact?.tel || "",
+        name:        pendingOrder.DeliveryName || "",
+        address01:   pendingOrder.DeliveryAddress1 || "",
+        address02:   pendingOrder.DeliveryAddress2 || "",
+        city:        pendingOrder.DeliveryCity || "",
+        contactnumber: pendingOrder.DeliveryTelNumber || "",
         ShippingMsg: pendingOrder.ShippingMsg || "",
       },
     },

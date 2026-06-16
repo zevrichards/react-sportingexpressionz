@@ -121,6 +121,14 @@ export default function Checkout() {
       setTelError('Please fill in all required fields.');
       return false;
     }
+    if (
+      contact.tel.length !== 7 ||
+      contact.tel.startsWith('868') ||
+      contact.tel.startsWith('1868')
+    ) {
+      setTelError('Please enter a valid 7-digit local number (without the 868 area code).');
+      return false;
+    }
     if (contact.tel !== contact.telConfirm) {
       setTelError('Telephone numbers do not match.');
       return false;
@@ -595,7 +603,7 @@ export default function Checkout() {
                   <label className="form-label">Telephone Number <span className="req">*</span></label>
                   <input type="tel" className="form-input" value={contact.tel}
                     onChange={e => setField('tel', e.target.value.replace(/\D/g, ''))}
-                    placeholder="7 digits e.g. 8681234" maxLength={10} required />
+                    placeholder="7 digits e.g. 8681234" maxLength={7} required />
                 </div>
                 <div className="form-group">
                   <label className="form-label">
@@ -606,7 +614,7 @@ export default function Checkout() {
                     className={`form-input${telError ? ' input-error' : ''}`}
                     value={contact.telConfirm}
                     onChange={e => setField('telConfirm', e.target.value.replace(/\D/g, ''))}
-                    placeholder="Re-enter telephone number" maxLength={10} required />
+                    placeholder="Re-enter telephone number" maxLength={7} required />
                   {telError && <p className="field-error">{telError}</p>}
                   <p className="tel-hint">A correct telephone number is critical — wrong numbers result in failed deliveries.</p>
                 </div>
