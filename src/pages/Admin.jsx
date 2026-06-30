@@ -10,11 +10,13 @@ import { useAuth } from '../context/AuthContext';
 import './Admin.css';
 
 const ADMIN_EMAIL = 'sportingexpressionztt@gmail.com';
+const RESEND_RECEIPT_URL = 'https://resendreceipt-zpqyzkrqza-uc.a.run.app';
 
 const TABS = [
   { id: 'addjersey',  label: 'Add Jersey' },
   { id: 'players',   label: 'Players' },
   { id: 'tracking',  label: 'Tracking' },
+  { id: 'resend',    label: 'Resend Receipt' },
   { id: 'promos',    label: 'Promo Codes' },
   { id: 'discounts', label: 'Discounts' },
   { id: 'sale',      label: 'Sale Prices' },
@@ -610,6 +612,66 @@ function TrackingTab() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// TAB: Resend Receipt
+// ══════════════════════════════════════════════════════════════════════════════
+function ResendReceiptTab() {
+  const { user }       = useAuth();
+  const [orderNumber, setOrderNumber] = useState('');
+  const [loading,      setLoading]    = useState(false);
+  const [msg,          setMsg]        = useState('');
+
+  const handleResend = async (e) => {
+    e.preventDefault();
+    const num = orderNumber.trim();
+    if (!num) return;
+    setLoading(true);
+    setMsg('');
+    try {
+      const idToken = await user.getIdToken();
+      const res = await fetch(RESEND_RECEIPT_URL, {
+        method:  'POST',
+        headers: { 'Authorization': `Bearer ${idToken}`, 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ orderNumber: num }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMsg(`✓ Receipt re-sent to ${data.to}`);
+      } else {
+        const text = await res.text();
+        setMsg('Error: ' + text);
+      }
+    } catch (err) {
+      console.error(err);
+      setMsg('Error: ' + err.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="admin-section">
+      <h2 className="admin-section-title">Resend Receipt Email</h2>
+      <p className="admin-hint">
+        Re-queues the order confirmation email for an order that's already been completed,
+        without touching stock, cart, or promo codes. Useful when the original email failed
+        to send (e.g. no email on file at checkout time).
+      </p>
+      <form onSubmit={handleResend} className="admin-form" style={{ maxWidth: 420 }}>
+        <div className="form-group">
+          <label className="form-label">Order Number</label>
+          <input className="form-input" value={orderNumber}
+            onChange={e => setOrderNumber(e.target.value)}
+            placeholder="e.g. 1751234567890" />
+        </div>
+        {msg && <p className={`admin-msg${msg.startsWith('Error') ? ' admin-msg--warn' : ''}`}>{msg}</p>}
+        <button className="btn btn-primary" disabled={loading || !orderNumber.trim()}>
+          {loading ? 'Sending…' : 'Resend Receipt'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // TAB: Promo Codes
 // ══════════════════════════════════════════════════════════════════════════════
 function PromosTab() {
@@ -1082,6 +1144,7 @@ export default function Admin() {
       {tab === 'addjersey'  && <AddJerseyTab />}
       {tab === 'players'    && <PlayersTab />}
       {tab === 'tracking'   && <TrackingTab />}
+      {tab === 'resend'     && <ResendReceiptTab />}
       {tab === 'promos'     && <PromosTab />}
       {tab === 'discounts'  && <DiscountsTab />}
       {tab === 'sale'       && <SalePriceTab />}

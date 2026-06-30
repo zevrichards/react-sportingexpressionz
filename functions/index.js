@@ -39,6 +39,14 @@ async function fulfillOrder({ orderNumber, transactionId, amount, provider }) {
   const pendingOrder = pendingSnap.data();
   const userId       = pendingOrder.userId;
 
+  // 🔁 Idempotency guard — PendingOrders are kept (not deleted) after
+  // fulfillment, so a webhook retry (e.g. after a transient error) must not
+  // re-run stock decrements / order completion a second time.
+  if (pendingOrder.status === "Completed") {
+    logger.warn("Order already completed, skipping duplicate fulfillment:", orderNumber);
+    return;
+  }
+
   const userRef  = db.collection("Users").doc(userId);
   const userSnap = await userRef.get();
   if (!userSnap.exists) { logger.error("User not found:", userId); return; }
@@ -139,6 +147,84 @@ async function fulfillOrder({ orderNumber, transactionId, amount, provider }) {
 
   logger.info("Order completed", { transactionId, orderNumber });
 }
+
+// ── resendReceipt — admin tool: re-queue a receipt email for an already-
+//    completed order, without touching stock / cart / promo / status.
+//    Safe to call any number of times. ──────────────────────────────────────
+exports.resendReceipt = onRequest({ secrets: [], cors: true }, async (req, res) => {
+  try {
+    const idToken = req.headers.authorization?.split("Bearer ")[1];
+    if (!idToken) return res.status(401).send("Missing token");
+
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    if (decoded.email !== "sportingexpressionztt@gmail.com") {
+      return res.status(403).send("Forbidden");
+    }
+
+    const { orderNumber } = req.body;
+    if (!orderNumber) return res.status(400).send("Missing orderNumber");
+
+    const pendingRef  = db.collection("PendingOrders").doc(orderNumber);
+    const pendingSnap = await pendingRef.get();
+    if (!pendingSnap.exists) return res.status(404).send("Order not found");
+    const pendingOrder = pendingSnap.data();
+
+    const userRef  = db.collection("Users").doc(pendingOrder.userId);
+    const userSnap = await userRef.get();
+    const user     = userSnap.exists ? userSnap.data() : {};
+
+    const orderRef  = userRef.collection("Orders").doc(orderNumber);
+    const orderSnap = await orderRef.get();
+    const order     = orderSnap.exists ? orderSnap.data() : pendingOrder;
+
+    const itemSnap   = await orderRef.collection("Items").get();
+    const itemsArray = itemSnap.docs.map(docSnap => {
+      const d = docSnap.data();
+      return {
+        text:         `${d.League || ""} ${d.Team || ""} ${d.Cut || ""} ${d.Sleeve || ""} ${d.Variant || ""} ${d.Size || ""} ${d.PlayerName || ""} ${d.PlayerNumber || ""}`.trim(),
+        image:        d.JerseyImgFront || "",
+        price:        "$" + d.Price,
+        quantity:     d.Quantity,
+        PlayerNote:   d.PlayerNote   || "",
+        PrintOptions: d.PrintOptions || "",
+      };
+    });
+    if (pendingOrder.ShippingMsg) {
+      itemsArray.push({ text: "Ordering and Shipping", image: "", price: "$" + SHIPPING_PRICE, quantity: "" });
+    }
+    itemsArray.push({ text: "Delivery", image: "", price: "$" + DELIVERY_PRICE, quantity: "" });
+
+    const recipientEmail = pendingOrder.email || user.email;
+    if (!recipientEmail) return res.status(400).send("No email on file for this order — nothing to send to.");
+
+    await db.collection("mail").add({
+      to: recipientEmail,
+      cc: "sportingexpressionztt@gmail.com",
+      template: {
+        name: "receipt",
+        data: {
+          orderNumber:   orderNumber,
+          total:         order.amount,
+          items:         itemsArray,
+          receipt:       order.paymentProvider !== "COD",
+          COD:           order.paymentProvider === "COD",
+          name:          pendingOrder.DeliveryName      || "",
+          address01:     pendingOrder.DeliveryAddress1  || "",
+          address02:     pendingOrder.DeliveryAddress2  || "",
+          city:          pendingOrder.DeliveryCity      || "",
+          contactnumber: pendingOrder.DeliveryTelNumber || "",
+          ShippingMsg:   pendingOrder.ShippingMsg       || "",
+        },
+      },
+    });
+
+    logger.info("Receipt resent", { orderNumber, to: recipientEmail });
+    res.json({ success: true, to: recipientEmail });
+  } catch (err) {
+    logger.error("resendReceipt error", err);
+    res.status(500).send("Server error");
+  }
+});
 
 // ── jerseyMeta — Open Graph preview for shared customize links ────────────────
 exports.jerseyMeta = onRequest({ cors: false }, async (req, res) => {
