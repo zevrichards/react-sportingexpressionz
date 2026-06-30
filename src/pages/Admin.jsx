@@ -10,7 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import './Admin.css';
 
 const ADMIN_EMAIL = 'sportingexpressionztt@gmail.com';
-const RESEND_RECEIPT_URL = 'https://resendreceipt-zpqyzkrqza-uc.a.run.app';
+const RESEND_RECEIPT_URL = 'https://us-central1-soccerexpressionz-test.cloudfunctions.net/resendReceipt';
 
 const TABS = [
   { id: 'addjersey',  label: 'Add Jersey' },
