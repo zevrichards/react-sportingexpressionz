@@ -25,12 +25,16 @@ export default function Checkout() {
 
   // ── Contact form ─────────────────────────────────────────────────────────
   const [contact, setContact] = useState({
-    name: '', address1: '', address2: '', city: '', tel: '', telConfirm: '',
+    name: '', address1: '', address2: '', city: '', tel: '', telConfirm: '', email: '',
   });
   const [telError,     setTelError]     = useState('');
   const [savingInfo,   setSavingInfo]   = useState(false);
   const [infoSaved,    setInfoSaved]    = useState(false);
   const [contactReady, setContactReady] = useState(false);
+
+  // Anonymous / legacy accounts have no auth email — collect one at checkout
+  // so the order receipt has somewhere to go.
+  const needsEmail = !user?.email;
 
   // ── Promo code ───────────────────────────────────────────────────────────
   const [promoInput,   setPromoInput]   = useState('');
@@ -72,6 +76,7 @@ export default function Checkout() {
             city:       c.city     || '',
             tel:        c.tel      || '',
             telConfirm: c.tel      || '',
+            email:      c.email    || '',
           });
         }
       }
@@ -121,6 +126,10 @@ export default function Checkout() {
       setTelError('Please fill in all required fields.');
       return false;
     }
+    if (needsEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)) {
+      setTelError('Please enter a valid email address — it\'s where your order receipt will be sent.');
+      return false;
+    }
     if (
       contact.tel.length !== 7 ||
       contact.tel.startsWith('868') ||
@@ -150,6 +159,7 @@ export default function Checkout() {
           address2: contact.address2,
           city:     contact.city,
           tel:      contact.tel,
+          email:    user.email || contact.email,
         },
       }, { merge: true });
       setInfoSaved(true);
@@ -227,7 +237,7 @@ export default function Checkout() {
       orderNumber,
       amount:       Number(grandTotal),
       userId:       user.uid,
-      email:        user.email || '',
+      email:        user.email || contact.email || '',
       PromoCode:    promoApplied?.code || null,
       ShippingMsg:  shippingMsg,
       DeliveryName:     contact.name,
@@ -269,7 +279,7 @@ export default function Checkout() {
     setProcessing(true);
     try {
       // Save latest contact info
-      await setDoc(doc(db, 'Users', user.uid), { Contact: { name: contact.name, address1: contact.address1, address2: contact.address2, city: contact.city, tel: contact.tel } }, { merge: true });
+      await setDoc(doc(db, 'Users', user.uid), { Contact: { name: contact.name, address1: contact.address1, address2: contact.address2, city: contact.city, tel: contact.tel, email: user.email || contact.email } }, { merge: true });
 
       const orderNumber = await createPendingOrder();
 
@@ -294,7 +304,7 @@ export default function Checkout() {
     if (!validateContact()) return;
     setProcessing(true);
     try {
-      await setDoc(doc(db, 'Users', user.uid), { Contact: { name: contact.name, address1: contact.address1, address2: contact.address2, city: contact.city, tel: contact.tel } }, { merge: true });
+      await setDoc(doc(db, 'Users', user.uid), { Contact: { name: contact.name, address1: contact.address1, address2: contact.address2, city: contact.city, tel: contact.tel, email: user.email || contact.email } }, { merge: true });
       const orderNumber = await createPendingOrder();
       // Save so user can resume if they close the tab before approving PayPal
       localStorage.setItem('pendingOrder', JSON.stringify({ orderNumber, amount: grandTotal }));
@@ -316,7 +326,7 @@ export default function Checkout() {
     if (!validateContact()) return;
     setProcessing(true);
     try {
-      await setDoc(doc(db, 'Users', user.uid), { Contact: { name: contact.name, address1: contact.address1, address2: contact.address2, city: contact.city, tel: contact.tel } }, { merge: true });
+      await setDoc(doc(db, 'Users', user.uid), { Contact: { name: contact.name, address1: contact.address1, address2: contact.address2, city: contact.city, tel: contact.tel, email: user.email || contact.email } }, { merge: true });
       const orderNumber = await createPendingOrder();
 
       const idToken = await user.getIdToken();
@@ -579,6 +589,17 @@ export default function Checkout() {
               <div className="spinner" style={{ margin: '24px 0' }} />
             ) : (
               <form onSubmit={handleSaveContact} className="contact-form">
+                {needsEmail && (
+                  <div className="form-group">
+                    <label className="form-label">
+                      Email Address <span className="req">*</span>
+                      <span className="label-hint"> — your order receipt will be sent here</span>
+                    </label>
+                    <input type="email" className="form-input" value={contact.email}
+                      onChange={e => setField('email', e.target.value)}
+                      placeholder="you@example.com" required />
+                  </div>
+                )}
                 <div className="form-group">
                   <label className="form-label">Full Name <span className="req">*</span></label>
                   <input type="text" className="form-input" value={contact.name}
@@ -603,7 +624,7 @@ export default function Checkout() {
                   <label className="form-label">Telephone Number <span className="req">*</span></label>
                   <input type="tel" className="form-input" value={contact.tel}
                     onChange={e => setField('tel', e.target.value.replace(/\D/g, ''))}
-                    placeholder="7 digits e.g. 8681234" maxLength={7} required />
+                    placeholder="7 digits, eg. 620-1234" maxLength={7} required />
                 </div>
                 <div className="form-group">
                   <label className="form-label">
