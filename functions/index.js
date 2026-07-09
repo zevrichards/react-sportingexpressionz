@@ -228,24 +228,60 @@ exports.resendReceipt = onRequest({ secrets: [], cors: true }, async (req, res) 
 
 // ── jerseyMeta — Open Graph preview for shared customize links ────────────────
 exports.jerseyMeta = onRequest({ cors: false }, async (req, res) => {
-  const { league, team, cut, sleeve, variant } = req.query;
-  const qs          = new URLSearchParams(req.query).toString();
-  const customizeUrl = `/customize${qs ? "?" + qs : ""}`;
-  const title       = [team, cut, sleeve, variant].filter(Boolean).join(" · ");
+  const { sport = 'Football', league, team, cut, sleeve, variant } = req.query;
 
-  let imageUrl = "";
+  const SPORT_COLS  = { Football: 'Leagues', F1: 'F1', Basketball: 'Basketball' };
+  const rootCol     = SPORT_COLS[sport] || 'Leagues';
+
+  // Mirrors GlobalJerseyPrice in firebase.js (TTD)
+  function fullPrice(cutName) {
+    if (!cutName) return 350;
+    const c = cutName.toLowerCase();
+    if (c.includes('youth'))                            return 300;
+    if (c.includes('womens') || c.includes("women's")) return 350;
+    if (c.includes('long'))                             return 400;
+    return 350;
+  }
+
+  const qs           = new URLSearchParams(req.query).toString();
+  const origin       = `https://${req.headers.host}`;
+  const customizeUrl = `${origin}/customize${qs ? "?" + qs : ""}`;
+  let imageUrl  = "";
+  let salePrice = null;
+  let basePrice = null;
+
   try {
     if (league && team && cut && sleeve && variant) {
-      const snap = await db
-        .collection("Leagues").doc(league)
+      const sleeveSnap = await db
+        .collection(rootCol).doc(league)
+        .collection("Teams").doc(team)
+        .collection("Cuts").doc(cut)
+        .collection("Sleeves").doc(sleeve)
+        .get();
+      if (sleeveSnap.exists) salePrice = sleeveSnap.data().SalePrice || null;
+
+      const variantSnap = await db
+        .collection(rootCol).doc(league)
         .collection("Teams").doc(team)
         .collection("Cuts").doc(cut)
         .collection("Sleeves").doc(sleeve)
         .collection("Variants").doc(variant)
         .get();
-      if (snap.exists) imageUrl = snap.data().JerseyImgFront || "";
+      if (variantSnap.exists) imageUrl = variantSnap.data().JerseyImgFront || "";
+
+      basePrice = fullPrice(cut);
     }
-  } catch (_) { /* serve without image */ }
+  } catch (_) { /* serve without price/image */ }
+
+  const priceTag = salePrice
+    ? `SALE: $${salePrice} TTD (was $${basePrice})`
+    : basePrice
+      ? `$${basePrice} TTD`
+      : null;
+
+  const titleParts = [team, cut, sleeve, variant, priceTag].filter(Boolean);
+  const title       = titleParts.join(" · ");
+  const description = "Customize your jersey — add a name & number";
 
   res.set("Cache-Control", "public, max-age=3600");
   res.set("Content-Type", "text/html; charset=utf-8");
@@ -255,11 +291,12 @@ exports.jerseyMeta = onRequest({ cors: false }, async (req, res) => {
   <title>${esc(title)}</title>
   <meta property="og:type"        content="website" />
   <meta property="og:title"       content="${esc(title)}" />
-  <meta property="og:description" content="Customize your jersey — add a name &amp; number" />
+  <meta property="og:description" content="${esc(description)}" />
   <meta property="og:url"         content="${esc(customizeUrl)}" />
   ${imageUrl ? `<meta property="og:image" content="${esc(imageUrl)}" />` : ""}
-  <meta name="twitter:card"  content="summary_large_image" />
-  <meta name="twitter:title" content="${esc(title)}" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="${esc(title)}" />
+  <meta name="twitter:description" content="${esc(description)}" />
   ${imageUrl ? `<meta name="twitter:image" content="${esc(imageUrl)}" />` : ""}
   <meta http-equiv="refresh" content="0; url=${esc(customizeUrl)}" />
 </head>
